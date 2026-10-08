@@ -1,23 +1,41 @@
-# 🎙️ Fish Audio S2 Pro F16 GGUF — Google Colab & Local Runner
+# 🎙️ Fish Audio S2 Pro F16 GGUF & OpenRouter Web Studio
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/digitaldeveloperinfo/tts-s2-pro-fp16gguf/blob/main/s2_pro_f16_colab.ipynb)
 [![License: Fish Audio Research License](https://img.shields.io/badge/License-Fish_Audio_Research-blue.svg)](https://huggingface.co/rodrigomt/s2-pro-gguf/blob/main/LICENSE.md)
-[![Model](https://img.shields.io/badge/Model-rodrigomt%2Fs2--pro--gguf-orange)](https://huggingface.co/rodrigomt/s2-pro-gguf)
+[![Model: Fish S2 Pro](https://img.shields.io/badge/Model-rodrigomt%2Fs2--pro--gguf-orange)](https://huggingface.co/rodrigomt/s2-pro-gguf)
+[![OpenRouter: S2.1 Pro Free](https://img.shields.io/badge/OpenRouter-fish--audio%2Fs2.1--pro--free-emerald)](https://openrouter.ai/fish-audio/s2.1-pro-free)
 
-Repository ini berisi skrip dan notebook untuk menjalankan **Fish Audio S2 Pro F16 GGUF** di **Google Colab** (GPU T4/L4/A100) dan Linux lokal menggunakan engine C++/GGML berakselerasi CUDA: **[s2.cpp](https://github.com/rodrigomatta/s2.cpp)**.
-
----
-
-## ⚡ Fitur Utama
-- **Akurasi Penuh (F16):** Menggunakan `s2-pro-f16.gguf` (9.9 GB) tanpa penurunan kualitas kuantisasi.
-- **Akselerasi CUDA:** Dijalankan via pure C++/GGML (`s2.cpp`) dengan backend CUDA tanpa overhead runtime Python/PyTorch saat inferensi.
-- **Voice Cloning (Zero-shot):** Mendukung kloning suara hanya dengan menyertakan sampel audio 5–30 detik (WAV/MP3) beserta transkripnya.
-- **Multi-platform:** Siap dijalankan langsung di Google Colab via tombol satu-klik atau di mesin Linux lokal.
-- **HTTP Server Bawaan:** Mendukung REST API server bawaan untuk integrasi eksternal.
+Repository ini menyediakan dua metode lengkap untuk menjalankan model suara **Fish Audio S2 Pro**:
+1. 🌐 **Web Studio Interface (`index.html`):** Antarmuka web interaktif siap pakai berbasis OpenRouter API (`fish-audio/s2.1-pro-free`).
+2. 🚀 **Google Colab Notebook (`s2_pro_f16_colab.ipynb`):** Eksekusi mandiri model `s2-pro-f16.gguf` (9.9 GB) menggunakan engine C++/CUDA native `s2.cpp`.
 
 ---
 
-## 🚀 Jalankan Cepat di Google Colab
+## 🌐 1. Web Studio Interface (OpenRouter API)
+
+Anda dapat menggunakan antarmuka web langsung di browser tanpa perlu server backend khusus (mendukung CORS langsung ke OpenRouter).
+
+### Fitur Web Studio:
+- **Input API Key Langsung:** Masukkan OpenRouter API Key Anda di halaman web (tersimpan aman hanya di `localStorage` browser Anda).
+- **Variasi Suara Tak Terbatas (Multi-Voice):**
+  - Preset suara Bahasa Indonesia (Pria & Wanita).
+  - Preset suara global & narrator.
+  - Mendukung ribuan **Custom Voice ID** (32-karakter hex) dari [Fish Audio Voice Library](https://fish.audio/voice-library).
+- **Style & Emotion Markers:** Tombol cepat untuk menyisipkan penanda emosi seperti `[natural and conversational]`, `[calm]`, `[cheerful]`, `[energetic]`, `[whispering]`, `[serious]`, dll.
+- **Audio Player & Riwayat:** Dilengkapi player audio HTML5, tombol unduh MP3, dan daftar riwayat generasi audio sesi berjalan.
+
+### Cara Menjalankan Web Studio:
+Cukup buka file `index.html` langsung di browser Anda (klik ganda `index.html`), atau jalankan mini web server lokal:
+```bash
+python -m http.server 8000
+```
+Lalu buka `http://localhost:8000` di browser.
+
+*(Atau aktifkan **GitHub Pages** di repositori ini untuk meng-hosting web interface secara online gratis!)*
+
+---
+
+## 🚀 2. Jalankan di Google Colab (Offline GGUF Model)
 
 1. Klik tombol **[Open In Colab](https://colab.research.google.com/github/digitaldeveloperinfo/tts-s2-pro-fp16gguf/blob/main/s2_pro_f16_colab.ipynb)** di atas.
 2. Pastikan Runtime Colab diatur ke **T4 GPU** (`Runtime` -> `Change runtime type` -> pilih `T4 GPU` atau lebih tinggi).
@@ -29,39 +47,40 @@ Repository ini berisi skrip dan notebook untuk menjalankan **Fish Audio S2 Pro F
 
 ---
 
-## 💻 Panduan Menjalankan di Mesin Lokal (Linux / Ubuntu)
+## ❓ Tanya Jawab Teknis: Variasi Suara
 
-### 1. Prasyarat
-- GPU NVIDIA dengan VRAM minimal 12–16 GB.
-- CUDA Toolkit ≥ 12.0
-- CMake ≥ 3.14 dan GCC/G++ C++17
-- Python 3.8+ (untuk download model via huggingface-hub)
+### Apakah hanya tersedia satu suara?
+**Tidak, ada ribuan variasi suara!**
+- Model `fish-audio/s2.1-pro-free` di OpenRouter mendukung parameter `"voice"`.
+- Anda dapat memasukkan sembarang **Voice ID** (32 karakter hex) dari ekosistem Fish Audio:
+  - *Indonesia Pria:* `eb2dd6154ca64c658eb58d2932b7451d`
+  - *Indonesia Wanita:* `a8d661f4e6d7456096581cda39636a6d`
+  - *Official Demo:* `b347db033a6549378b48d00acb0d06cd`
+  - Suara lainnya dapat dicari di [fish.audio/voice-library](https://fish.audio/voice-library).
+- Jika parameter `voice` dikosongkan, API otomatis menggunakan suara bawaan (default speaker).
+- Selain Voice ID, gaya dan intonasi dapat diubah secara dinamis dengan menambahkan **Emotion Tags** di awal teks seperti `[calm]`, `[energetic]`, `[whispering]`.
 
-### 2. Clone Repository & Submodule
+---
+
+## 💻 3. Menjalankan di Mesin Lokal (Linux / Ubuntu)
+
+### Prasyarat
+- GPU NVIDIA (VRAM ≥ 12 GB direkomendasikan untuk F16)
+- CUDA Toolkit ≥ 12.0, CMake ≥ 3.14, GCC/G++ C++17
+
 ```bash
-git clone https://github.com/digitaldeveloperinfo/tts-s2-pro-fp16gguf.git
-cd tts-s2-pro-fp16gguf
-
-# Clone s2.cpp beserta submodule GGML
+# Clone & build
 git clone --recurse-submodules https://github.com/rodrigomatta/s2.cpp.git
-```
-
-### 3. Kompilasi `s2.cpp`
-```bash
 cd s2.cpp
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DS2_CUDA=ON
 cmake --build build --parallel $(nproc)
 cd ..
-```
 
-### 4. Unduh Model `s2-pro-f16.gguf`
-```bash
+# Download model & jalankan
 pip install huggingface_hub hf_transfer
 python run_tts.py --download
-```
 
-### 5. Inferensi Text-to-Speech
-```bash
+# Inferensi
 python run_tts.py \
   --bin ./s2.cpp/build/s2 \
   --model s2-pro-f16.gguf \
@@ -71,38 +90,10 @@ python run_tts.py \
   --output output.wav
 ```
 
-### 6. Voice Cloning
-```bash
-python run_tts.py \
-  --bin ./s2.cpp/build/s2 \
-  --model s2-pro-f16.gguf \
-  --tokenizer tokenizer.json \
-  --cuda 0 \
-  --prompt-audio "path/to/reference.wav" \
-  --prompt-text "Transkrip teks dari audio referensi." \
-  --text "Teks baru yang disuarakan dengan karakter suara referensi." \
-  --output cloned.wav
-```
-
----
-
-## 🛠️ Tips & Troubleshooting
-
-- **Out of Memory (CUDA OOM):**
-  Jika VRAM tidak cukup (misal VRAM < 12 GB), Anda dapat memindahkan proses dekoding codec ke CPU dengan menambahkan argumen `--codec-cpu`:
-  ```bash
-  python run_tts.py ... --codec-cpu
-  ```
-  Atau batasi jumlah layer transformer yang dioffload ke GPU:
-  ```bash
-  python run_tts.py ... -ngl 30
-  ```
-- **Kuantisasi Lebih Ringan:**
-  Jika ingin versi yang jauh lebih hemat VRAM, gunakan model `s2-pro-q8_0.gguf` (5.6 GB) atau `s2-pro-q6_k.gguf` (4.5 GB) dari repository Hugging Face [rodrigomt/s2-pro-gguf](https://huggingface.co/rodrigomt/s2-pro-gguf).
-
 ---
 
 ## 📜 Lisensi & Atribusi
 - Bobot model dilisensikan di bawah **Fish Audio Research License** (bebas untuk riset & non-komersial).
-- Engine inferensi dikembangkan oleh komunitas di [rodrigomatta/s2.cpp](https://github.com/rodrigomatta/s2.cpp).
+- Engine inferensi lokal oleh [rodrigomatta/s2.cpp](https://github.com/rodrigomatta/s2.cpp).
 - GGUF Weights disediakan oleh [rodrigomt/s2-pro-gguf](https://huggingface.co/rodrigomt/s2-pro-gguf).
+- API OpenRouter disediakan oleh [OpenRouter.ai](https://openrouter.ai).
