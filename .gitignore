@@ -1,0 +1,29 @@
+# Model files
+*.gguf
+*.bin
+*.safetensors
+
+# Audio files
+*.wav
+*.mp3
+*.ogg
+*.flac
+
+# Build directories
+build/
+bin/
+*.o
+*.so
+*.dll
+*.dylib
+
+# Python & Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.env
+
+# Voices profile
+voices/
+*.s2voice
